@@ -1,10 +1,8 @@
 ﻿using System;
 using Seatbelt.Commands;
 
-namespace Seatbelt.Output.Sinks
-{
-    internal interface IOutputSink : IDisposable
-    {
+namespace Seatbelt.Output.Sinks {
+    internal interface IOutputSink : IDisposable {
         void WriteOutput(CommandDTOBase dto);
         void WriteHost(string message);
         void WriteVerbose(string message);

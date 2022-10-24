@@ -5,10 +5,8 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace Seatbelt
-{
-    public class Seatbelt : IDisposable
-    {
+namespace Seatbelt {
+    public class Seatbelt : IDisposable {
         public bool FilterResults { get; }
 
         private readonly IOutputSink _outputSink;
@@ -16,8 +14,7 @@ namespace Seatbelt
         private const string Version = "1.2.1";
         private SeatbeltOptions Options { get; set; }
 
-        public Seatbelt(string[] args)
-        {
+        public Seatbelt(string[] args) {
             Options = (new SeatbeltArgumentParser(args)).Parse();
 
             _outputSink = OutputSinkFromArgs(Options.OutputFile);
@@ -33,13 +30,11 @@ namespace Seatbelt
                 );
         }
 
-        public string GetOutput()
-        {
+        public string GetOutput() {
             return _outputSink.GetOutput();
         }
 
-        private IOutputSink OutputSinkFromArgs(string? outputFileArg)
-        {
+        private IOutputSink OutputSinkFromArgs(string? outputFileArg) {
             if (outputFileArg == null)
                 return new TextOutputSink(new ConsoleTextWriter(), FilterResults);
 
@@ -47,45 +42,39 @@ namespace Seatbelt
                 throw new Exception("Invalid filename");
 
 
-            if (outputFileArg.EndsWith(".json"))
-            {
+            if (outputFileArg.EndsWith(".json")) {
                 return new JsonFileOutputSink(outputFileArg, FilterResults);
             }
 
-            if (outputFileArg == "jsonstring")
-            {
+            if (outputFileArg == "jsonstring") {
                 return new JsonStringOutputSink(outputFileArg, FilterResults);
             }
 
             return new TextOutputSink(new FileTextWriter(outputFileArg), FilterResults);
         }
 
-        public void Start()
-        {
+        public void Start() {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            if (!Options.Commands.Any() && !Options.CommandGroups.Any())
-            {
-                PrintLogo();
+            if (!Options.Commands.Any() && !Options.CommandGroups.Any()) {
+                //PrintLogo();
                 Usage();
                 return;
             }
 
             if (!Options.QuietMode)
-                PrintLogo();
+                //PrintLogo();
 
             _runtime.Execute();
 
             watch.Stop();
 
-            if (!Options.QuietMode)
-            {
+            if (!Options.QuietMode) {
                 _outputSink.WriteVerbose($"\n\n[*] Completed collection in {(watch.ElapsedMilliseconds / 1000.0)} seconds\n");
             }
         }
 
-        public void PrintLogo()
-        {
+        public void PrintLogo() {
             _outputSink.WriteHost("\n\n                        %&&@@@&&                                                                                  ");
             _outputSink.WriteHost("                        &&&&&&&%%%,                       #&&@@@@@@%%%%%%###############%                         ");
             _outputSink.WriteHost("                        &%&   %&%%                        &////(((&%%%%%#%################//((((###%%%%%%%%%%%%%%%");
@@ -102,19 +91,15 @@ namespace Seatbelt
         }
 
 
-        private void Usage()
-        {
+        private void Usage() {
             // List all available commands
             _outputSink.WriteHost("Available commands (+ means remote usage is supported):\n");
-            _runtime.AllCommands.ForEach(c =>
-            {
-                if (c.SupportRemote)
-                {
-                    _outputSink.WriteHost($"    + {c.Command,-22} - {c.Description}");
+            _runtime.AllCommands.ForEach(c => {
+                if (c.SupportRemote) {
+                    _outputSink.WriteHost($"+ {c.Command,-24} - {c.Description}");
                 }
-                else
-                {
-                    _outputSink.WriteHost($"      {c.Command,-22} - {c.Description}");
+                else {
+                    _outputSink.WriteHost($"  {c.Command,-24} - {c.Description}");
                 }
             });
 
@@ -126,11 +111,9 @@ namespace Seatbelt
             _outputSink.WriteHost("\n    Or command groups except specific commands \"Seatbelt.exe <group> -Command\"\n");
 
             var sb = new StringBuilder();
-            foreach (var group in commandGroups)
-            {
+            foreach (var group in commandGroups) {
 
-                if (group == "All")
-                {
+                if (group == "All") {
                     sb.Append($"   \"Seatbelt.exe -group={group.ToLower()}\" runs all commands\n\n");
                     continue;
                 }
@@ -142,17 +125,14 @@ namespace Seatbelt
                         .Select(c => c.Command)
                         .ToArray();
 
-                for (var i = 0; i < groupCommands.Length; i++)
-                {
+                for (var i = 0; i < groupCommands.Length; i++) {
                     sb.Append(groupCommands[i]);
 
-                    if (i != groupCommands.Length - 1)
-                    {
+                    if (i != groupCommands.Length - 1) {
                         sb.Append(", ");
                     }
 
-                    if (i % 4 == 0 && i != 0)
-                    {
+                    if (i % 4 == 0 && i != 0) {
                         sb.Append("\n        ");
                     }
                 }
@@ -173,8 +153,7 @@ namespace Seatbelt
 
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             _outputSink.Dispose();
         }
     }
