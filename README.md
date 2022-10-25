@@ -1,5 +1,7 @@
 # Seatbelt
 
+汉化版Seatbelt, 然后加了亿点中国特色的功能
+
 ----
 
 Seatbelt is a C# project that performs a number of security oriented host-survey "safety checks" relevant from both offensive and defensive security perspectives.
